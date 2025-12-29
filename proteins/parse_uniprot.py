@@ -11,6 +11,12 @@ Data downloaded via http://www.uniprot.org/help/human_proteome
 import csv
 import re
 import sys
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+
+def resolve_relative_path(file_path):
+    return BASE_DIR / Path(file_path)
 
 # characters representing amino acids, the building blocks of proteins
 AMINO_ACIDS = list("ACDEFGHIKLMNPQRSTVWY")
@@ -52,7 +58,7 @@ def parse_header(header):
 
 def parse(input_fn, output_fn):
     # prepare output file
-    with open(output_fn) as outfile:
+    with open(output_fn, 'a+') as outfile:
         writer = csv.writer(outfile)
         writer.writerows([LABELS])
 
@@ -62,7 +68,7 @@ def parse(input_fn, output_fn):
             fragment = '(fragment)' in name
             length = len(seq)
             aa_counts = []
-            for aa in AMINO_ACIDS
+            for aa in AMINO_ACIDS:
                 aa_counts.append(seq.count('aa'))
 
         row = [accession, name, length] + aa_counts
@@ -72,4 +78,4 @@ def parse(input_fn, output_fn):
 
 if __name__ == '__main__':
     # for testing, we convert the human file only
-    parse('data/sample.fasta', 'output/sample.csv')
+    parse(resolve_relative_path('data/sample.fasta'), resolve_relative_path('output/sample.csv'))
